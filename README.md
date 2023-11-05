@@ -8,5 +8,7 @@ Turning Uncertainty into Confidence: a Case for using Conformal Prediction for C
 For the data sets used in the paper, see
 
 D1: https://huggingface.co/datasets/scikit-learn/churn-prediction
+
 D2: https://www.kaggle.com/datasets/jpacse/datasets-for-churn-telecom
+
 D3 & D4: https://www.kaggle.com/datasets/varshapandey/assignment-data 
