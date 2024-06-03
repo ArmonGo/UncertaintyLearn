@@ -1,9 +1,11 @@
-# Turning Uncertainty into Confidence: a Case for using Conformal Prediction for Churn Prediction
+# Learning from Uncertainty: Improving Churning Prediction using Conformal Confidence Intervals
 
 
 This repository contains the implementation for the models included in the experimental comparison as presented in:
 
-Turning Uncertainty into Confidence: a Case for using Conformal Prediction for Churn Prediction Yameng Guo, Seppe vanden Broucke
+Learning from Uncertainty: Improving Churning Prediction using Conformal Confidence Intervals Yameng Guo, Seppe vanden Broucke
+
+## Data set 
 
 For the data sets used in the paper, see
 
@@ -12,3 +14,10 @@ D1: https://huggingface.co/datasets/scikit-learn/churn-prediction
 D2: https://www.kaggle.com/datasets/jpacse/datasets-for-churn-telecom
 
 D3 & D4: https://www.kaggle.com/datasets/varshapandey/assignment-data 
+
+## implementation 
+The implementation details are in folder 'code'.
+
+## Result
+You can find the result in the original paper [waiting for a link], while we provide extra lift curve for top 30% ranking instances of each data set. You can find the complete curve in folder 'lift curve'.
+
