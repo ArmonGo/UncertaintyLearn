@@ -1,6 +1,6 @@
 from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import precision_recall_curve, auc
-from sklearn.metrics import fbeta_score, make_scorer
+from sklearn.metrics import make_scorer
 
 def my_custom_loss_func(y_true, y_prob):
     pr, re, _ = precision_recall_curve(y_true, y_prob)

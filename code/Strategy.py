@@ -4,10 +4,13 @@
 from Predictor import  * 
 from DataProcess import * 
 from Gridsearch import *
+import copy 
 import pickle
 from pathlib import Path
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.linear_model import LogisticRegression
+from scipy import stats
+from sklearn.utils import class_weight
 
 class experiment:
     def __init__(self, params):
@@ -23,13 +26,13 @@ class experiment:
 
     def get_data(self, path, f): # data index
         self.datacode = str(path[-6: -4])
-        self.retrain = Path("YOUR_SAVE_PATH/best_param_" + self.datacode + '.pkl').is_file()
+        self.retrain = Path("YOUR_RESULT_PATH/best_param_" + self.datacode + '.pkl').is_file()
         if self.retrain: # the text file exist
             # load the train and test data 
-            with open ("YOUR_SAVE_PATH/test_df_" + self.datacode + '.pkl', 'rb') as fp:
+            with open ("YOUR_RESULT_PATH/test_df_" + self.datacode + '.pkl', 'rb') as fp:
                 dataset = pickle.load(fp)
             # load the best param
-            with open ("YOUR_SAVE_PATH/best_param_" + self.datacode + '.pkl', 'rb') as fp:
+            with open ("YOUR_RESULT_PATH/best_param_" + self.datacode + '.pkl', 'rb') as fp:
                 self.best_param = pickle.load(fp)
             self.datas = dataset
 
@@ -38,9 +41,9 @@ class experiment:
                 X_train, X_test, y_train, y_test =  f(path, scaler = self.scaler)
 
             else:
-                df = f(path)
-                f = stand_split_df
-                X_train, X_test, y_train, y_test = f(df, test_size = self.test_size, 
+                df, ranking_id, woe_feats = f(path)
+                f = woe_stand_split_df
+                X_train, X_test, y_train, y_test = f(df, woe_feats, test_size = self.test_size, 
                                                                 scaler = self.scaler)
             self.datas ={}
             self.datas["ori"] = (X_train, y_train)
@@ -48,7 +51,7 @@ class experiment:
             for s in self.samplers.keys():
                 X_res, y_res = sampling_data(X_train, y_train, sampler = self.samplers[s])
                 self.datas[s] = (X_res, y_res)
-            with open("YOUR_SAVE_PATH/test_df_" + str(path[-6: -4]) + '.pkl', 'wb') as fp:
+            with open("YOUR_RESULT_PATH/test_df_" + str(path[-6: -4]) + '.pkl', 'wb') as fp:
                 pickle.dump(self.datas, fp)
                 print("test data has been saved")
         return self.datas
@@ -98,7 +101,7 @@ class experiment:
             print("model: ", m_n)
             m, _ = param_choice[m_n]
             if param_choice == self.base_ci_unaware:
-                cp_m = CP(m(), self.best_param["base_ci_unaware"][m_n], self.alpha, cp_score )
+                cp_m = CP(m(), self.best_param["base_ci_unaware"][m_n], self.alpha, cp_score)
             elif param_choice == self.base_ci_aware:
                 cp_m = CP(m(), self.best_param["base_ci_aware"][m_n], self.alpha, cp_score)
             cp_m.fit(X_train, y_train)
@@ -115,7 +118,10 @@ class experiment:
         if not self.retrain:
             print("samplers: ", s_n)
             X_train, y_train = self.datas[s_n]
-            for m_n in self.base_ci_unaware.keys():
+            run_range = list(self.base_ci_unaware.keys())
+            run_range.remove('BalancedRandomForestClassifier')
+            run_range.remove('RUSBoostClassifier')
+            for m_n in run_range:
                 print("model: ", m_n)
                 m, m_params = self.base_ci_unaware[m_n]
                 best_m, best_param = cross_val(m(), m_params, X_train, y_train)
@@ -128,8 +134,10 @@ class experiment:
         else:
             print("samplers: ", s_n)
             X_train, y_train = self.datas[s_n]
-            for m_n in self.base_ci_unaware.keys():
-                print("model: ", m_n)
+            run_range = list(self.base_ci_unaware.keys())
+            run_range.remove('BalancedRandomForestClassifier')
+            run_range.remove('RUSBoostClassifier')
+            for m_n in run_range:
                 best_m, _ = self.base_ci_unaware[m_n]
                 params = self.best_param["base_ci_unaware"][m_n + "_" + s_n]
                 best_m = best_m()
@@ -155,9 +163,7 @@ class experiment:
         for c in self.cp_score:
             print("cp_ci_unaware_"+ c + " begins")
             result_set["cp_ci_unaware_" + c ] =  self.cp( param_choice = self.base_ci_unaware, cp_score=c)
-            print("cp_ci_aware_"+ c + " begins")
-            result_set["cp_ci_aware_" + c] =  self.cp( param_choice = self.base_ci_aware, cp_score=c)
-
+            
         # sampling
         print("sampling begins")
         for s_n in self.samplers.keys():
@@ -172,23 +178,15 @@ def combine_score(res, y_train):
                 for a in res[k][m]["threshold"].keys():
                     scaler = MinMaxScaler()
                     lgs = LogisticRegression()
-                    a = round(a, 2)
-                    
+                    a = round(a, 3)
                     X = (np.concatenate([(res[k][m]["train_threshold"][a] [:,1] -  res[k][m]["train_threshold"][a] [:,0]),
                                     res[k][m]["train_prob"][a]]).reshape(2, -1)).T
-                
                     scaler.fit(X)
                     X = scaler.transform(X)
                     lgs.fit(X, y_train)
                     X_t = (np.concatenate([(res[k][m]["threshold"][a] [:,1] -  res[k][m]["threshold"][a] [:,0]),
                                     res[k][m]["prob"][a]]).reshape(2, -1)).T
+                    X_t = scaler.transform(X_t)
                     res[k][m]["prob_comb"][a]= lgs.predict_proba(X_t)[:, 1]
     return res
-
-
-    
-
-
-
-
 

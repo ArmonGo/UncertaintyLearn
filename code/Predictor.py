@@ -6,12 +6,11 @@ import numpy as np
 import warnings
 from mapie.regression import MapieRegressor
 from sklearn.model_selection import KFold
-from mapie.conformity_scores import GammaConformityScore, AbsoluteConformityScore
-from sklearn.calibration import CalibratedClassifierCV
+from mapie.conformity_scores import  GammaConformityScore, AbsoluteConformityScore
 from xgboost import XGBClassifier 
 from sklearn.utils import class_weight
 
-class ClassifierRegressorCalib(BaseEstimator, RegressorMixin):
+class ClassifierRegressor(BaseEstimator, RegressorMixin):
     def __init__(self, estimator=None, cp_score=None):
         self.estimator = estimator
         self.cp_score = cp_score
@@ -32,15 +31,14 @@ class ClassifierRegressorCalib(BaseEstimator, RegressorMixin):
             y = (y > .5).astype(int)
             self.classes_ = unique_labels(y)
             self.fitted_estimator_ = clone(self.estimator)
-            self.calib_est_ = CalibratedClassifierCV(estimator=self.fitted_estimator_, cv = 5)
-            self.calib_est_.fit(X, y)
+            self.fitted_estimator_.fit(X, y)
         self.is_fitted_ = True
         return self
 
     def predict(self, X):
         check_is_fitted(self)
-        if isinstance(self.calib_est_, ClassifierMixin):
-            pred_prob = self.calib_est_.predict_proba(X)
+        if isinstance(self.fitted_estimator_, ClassifierMixin):
+            pred_prob = self.fitted_estimator_.predict_proba(X)
             if self.cp_score is None or self.cp_score =="abs": # default abs
                 return pred_prob[:, 1]
             elif self.cp_score =="gamma": # 
@@ -48,22 +46,22 @@ class ClassifierRegressorCalib(BaseEstimator, RegressorMixin):
             else:
                 return NameError
         else:
-            return self.calib_est_.predict(X)
+            return self.fitted_estimator_.predict(X)
 
 class CP: 
-    def __init__(self, estimator, params, alpha, cp_score):  # calib or not 
+    def __init__(self, estimator, params, alpha, cp_score): 
         self.estimator = estimator
         self.params = params
         self.estimator.set_params(**params)
         self.cp_score = cp_score
-        self.kf = KFold(n_splits=5, shuffle=True,random_state=np.random.randint(100)) 
+        self.kf = KFold(n_splits=5, shuffle=True,random_state=np.random.randint(100)) # fix kfold for each estimator
         if self.cp_score == "abs":
-            self.mapie_r = MapieRegressor(ClassifierRegressorCalib(self.estimator,
+            self.mapie_r = MapieRegressor(ClassifierRegressor(self.estimator,
                                                                     cp_score= self.cp_score), 
                                                                     method="plus", cv = self.kf,
                                                                     conformity_score= AbsoluteConformityScore())
         elif self.cp_score == "gamma":
-            self.mapie_r = MapieRegressor(ClassifierRegressorCalib(self.estimator, 
+            self.mapie_r = MapieRegressor(ClassifierRegressor(self.estimator, 
                                                                     cp_score= self.cp_score), 
                                                                     method="plus", cv = self.kf,
                                                                     conformity_score= GammaConformityScore())
@@ -75,7 +73,7 @@ class CP:
         if self.cp_score == "abs":
             y_add = np.array(y)
         elif self.cp_score == "gamma":
-            y_add = np.array(y)+ 0.000001 
+            y_add = np.array(y)+ 0.000001 # remember add the same amount to the regressor classfier
         self.mapie_r.fit(X, y_add) # make sure it is positive for gamma score
 
     def predict(self, X):
@@ -84,7 +82,7 @@ class CP:
                      "prob" : {}
                      }
         for a in range(len(self.alpha)):
-            y_cp_pred["threshold"][self.alpha[a]] = y_cp_score_r[:, :, a] 
+            y_cp_pred["threshold"][self.alpha[a]] = y_cp_score_r[:, :, a]
             y_cp_pred["prob"][self.alpha[a]] = y_std_pred_r
         return y_cp_pred
 
