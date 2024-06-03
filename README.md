@@ -15,7 +15,7 @@ D2: https://www.kaggle.com/datasets/jpacse/datasets-for-churn-telecom
 
 D3 & D4: https://www.kaggle.com/datasets/varshapandey/assignment-data 
 
-## implementation 
+## Implementation 
 The implementation details are in folder 'code'.
 
 ## Result
