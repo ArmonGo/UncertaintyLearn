@@ -19,5 +19,5 @@ D3 & D4: https://www.kaggle.com/datasets/varshapandey/assignment-data
 The implementation details are in folder 'code'.
 
 ## Result
-You can find the result in the original paper [waiting for a link], while we provide extra lift curve for top 30% ranking instances of each data set. You can find the complete curve in folder 'lift curve'.
+You can find the result in the original paper [waiting for a link], besides we provide extra lift curve for top 30% ranking instances of each data set. You can find the complete curve in folder 'lift curve'.
 
