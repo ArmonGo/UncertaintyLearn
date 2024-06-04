@@ -22,7 +22,6 @@ the tuned hyperparameters is shown as follows:
 
 | Estimator |  Hyperparameter Grid |
 | --- | --- |
-
 | Logistic Regression  |  C: [0.01, 0.1, 1, 10, 30,...110], class_weight: [balanced] (for class weights approach only)  |
 
 ## Result
