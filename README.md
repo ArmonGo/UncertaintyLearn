@@ -22,8 +22,7 @@ the tuned hyperparameters is shown as follows:
 
 | Estimator |  Hyperparameter Grid |
 | --- | --- |
-| Logistic Regression  |  C: [0.01, 0.1, 1, 10, 30,...110], 
-                          class_weight: [balanced] (for class weights approach only)  |
+| Logistic Regression  |  C: [0.01, 0.1, 1, 10, 30,...110], \n class_weight: [balanced] (for class weights approach only)  |
 
 ## Result
 You can find the result in the original paper [waiting for a link], besides we provide extra lift curve for top 30% ranking instances of each data set. You can find the complete curve in folder 'lift curve'.
