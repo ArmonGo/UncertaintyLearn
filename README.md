@@ -22,7 +22,14 @@ the tuned hyperparameters is shown as follows:
 
 | Estimator |  Hyperparameter Grid |
 | --- | --- |
-| Logistic Regression  |  C: [0.01, 0.1, 1, 10, 30,...110], \n class_weight: [balanced] (for class weights approach only)  |
+| Logistic Regression  |  C: [0.01, 0.1, 1, 10, 30,...110] <br> class_weight: [balanced] (for class weights approach only)  |
+| Decision Tree   |  min_samples_split: [2, 3, 5] <br> min_samples_leaf: [3, 5, 10] <br> class_weight: [balanced] (for class weights approach only) | 
+| K-NN |  n_neighbors : [5, 15,...95] <br> weights: [uniform, distance] | 
+| Random Forest   |  min_samples_split: [2, 3, 5] <br> min_samples_leaf: [3, 5, 10] <br> class_weight: [balanced] (for class weights approach only) | 
+| LightGBM   |  reg_alpha: [0, 0.1, 0.2,...1] <br> reg_lambda: [0, 0.1, 0.2,...1] <br> learning_rate: [0.1, 0.01, 0.005] <br> class_weight: [balanced] (for class weights approach only)  | 
+| XGBoost    |  reg_alpha: [0, 0.1, 0.2,...1] <br> reg_lambda: [0, 0.1, 0.2,...1] <br> learning_rate: [0.1, 0.01, 0.005] <br> weight: [True] (for class weights approach only) | 
+| RUSBoost    |  learning_rate: [0, 0.1,...1.0] <br> sampling_strategy: [all, majority, 0.5, 0.6,...1.0{]}, replacement: [True] | 
+| Balanced RF  |  min_samples_split: [2, 3, 5] <br> min_samples_leaf: [3, 5, 10] <br> sampling_strategy: [all, majority, 0.5, 0.6,...1.0] <br> replacement: [True] | 
 
 ## Result
 You can find the result in the original paper [waiting for a link], besides we provide extra lift curve for top 30% ranking instances of each data set. You can find the complete curve in folder 'lift curve'.
