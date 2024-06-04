@@ -3,7 +3,7 @@
 
 This repository contains the implementation for the models included in the experimental comparison as presented in:
 
-Learning from Uncertainty: Improving Churning Prediction using Conformal Confidence Intervals Yameng Guo, Seppe vanden Broucke
+Learning from Uncertainty: Improving Churning Prediction using Conformal Confidence Intervals 
 
 ## Data set 
 
