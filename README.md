@@ -31,7 +31,7 @@ the tuned hyperparameters is shown as follows:
 | RUSBoost    |  learning_rate: [0, 0.1,...1.0] <br> sampling_strategy: [all, majority, 0.5, 0.6,...1.0{]} <br> replacement: [True] | 
 | Balanced RF  |  min_samples_split: [2, 3, 5] <br> min_samples_leaf: [3, 5, 10] <br> sampling_strategy: [all, majority, 0.5, 0.6,...1.0] <br> replacement: [True] | 
 
-In addition, the alpha used in prediction for conformal prediction is considered as independent hyperparameter as well, which covers the range from 0.01 to, 0.5. ([0.01, 0.02, 0.03, 0.04, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5] in details.)
+In addition, the alpha used in prediction for conformal prediction is considered as an independent hyperparameter, which ranging from 0.01 to, 0.5. ([0.01, 0.02, 0.03, 0.04, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5] in details.)
 
 ## Result
 You can find the result in the original paper [waiting for a link], besides we provide extra lift curve for top 30% ranking instances of each data set. You can find the complete curve in folder 'lift curve'.
